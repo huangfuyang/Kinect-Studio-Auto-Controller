@@ -59,11 +59,15 @@ namespace KinectStudioControllerCSharp
 
         public int FirstFrame
         {
-            get { return firstFrame; }
+            get {
+                firstFrame = Convert.ToInt32(tbx_FirstFrame.Text);
+                return firstFrame; 
+
+            }
             set 
             { 
                 firstFrame = value;
-                lbl_FirstFrame.Text = firstFrame.ToString();
+                tbx_FirstFrame.Text = firstFrame.ToString();
             }
         }
         public Form1()
@@ -491,11 +495,7 @@ namespace KinectStudioControllerCSharp
 
         private void btn_ReadFrame_Click(object sender, EventArgs e)
         {
-            IntPtr tool = win32API.FindWindowEx(hWnd, IntPtr.Zero, null, "toolStrip1");
-            int x = 340, y = 10;
-            win32API.SendMessage(tool, win32API.WM_LBUTTONDOWN, 0, (y << 16) + x);
-            win32API.SendMessage(tool, win32API.WM_LBUTTONUP, 0, (y << 16) + x);
-            Thread.Sleep(500);
+            IntPtr dllEntry = IntPtr.Zero;
             Process[] pros = Process.GetProcessesByName("KinectStudio");
             Process pro = pros[0];
             if (pro.ProcessName == "KinectStudio")
@@ -504,16 +504,33 @@ namespace KinectStudioControllerCSharp
                 {
                     if (pro.Modules[i].ModuleName == "KinectStudioNative.dll")
                     {
-                        IntPtr dllEntry = pro.Modules[i].EntryPointAddress;
+                        dllEntry = pro.Modules[i].EntryPointAddress;
+                        Console.WriteLine("KinectNative.dll addr: {0}",dllEntry.ToString("x8"));
                         dllEntry += Convert.ToInt32("208fbf", 16);
-                        dllEntry += Convert.ToInt32("B2ED30", 16);
-                        Console.WriteLine("First Frame addr:" + pro.Modules[i].EntryPointAddress.ToString("x8"));
-                        FirstFrame = ReadMemoryValue(dllEntry, pro.Id);
-                        Console.WriteLine("First Frame value:" + FirstFrame);
+                        Console.WriteLine("Frame addr:" + dllEntry.ToString("x8"));                       
+
                     }
 
                 }
             }
+
+            IntPtr tool = win32API.FindWindowEx(hWnd, IntPtr.Zero, null, "toolStrip1");
+            int x = 340, y = 10;
+            int min = int.MaxValue;
+            for (int i = 0; i < 4; i++)
+            {
+                
+                int tempValue = ReadMemoryValue(dllEntry, pro.Id);
+                Console.WriteLine("candidate Frame value:" + tempValue);
+                if (tempValue != 0 && tempValue< min)
+                {
+                    min = tempValue;
+                }
+                win32API.SendMessage(tool, win32API.WM_LBUTTONDOWN, 0, (y << 16) + x);
+                win32API.SendMessage(tool, win32API.WM_LBUTTONUP, 0, (y << 16) + x);
+                Thread.Sleep(200);
+            }
+            FirstFrame = min;
 
         }
 

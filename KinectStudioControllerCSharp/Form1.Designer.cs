@@ -45,9 +45,9 @@
             this.btn_Test = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.btn_ReadFrame = new System.Windows.Forms.Button();
-            this.lbl_FirstFrame = new System.Windows.Forms.Label();
             this.rdb_frame = new System.Windows.Forms.RadioButton();
             this.rdb_timestamp = new System.Windows.Forms.RadioButton();
+            this.tbx_FirstFrame = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btn_Start
@@ -215,15 +215,6 @@
             this.btn_ReadFrame.UseVisualStyleBackColor = true;
             this.btn_ReadFrame.Click += new System.EventHandler(this.btn_ReadFrame_Click);
             // 
-            // lbl_FirstFrame
-            // 
-            this.lbl_FirstFrame.AutoSize = true;
-            this.lbl_FirstFrame.Location = new System.Drawing.Point(206, 126);
-            this.lbl_FirstFrame.Name = "lbl_FirstFrame";
-            this.lbl_FirstFrame.Size = new System.Drawing.Size(11, 12);
-            this.lbl_FirstFrame.TabIndex = 17;
-            this.lbl_FirstFrame.Text = "0";
-            // 
             // rdb_frame
             // 
             this.rdb_frame.AutoSize = true;
@@ -247,14 +238,22 @@
             this.rdb_timestamp.Text = "timestamp";
             this.rdb_timestamp.UseVisualStyleBackColor = true;
             // 
+            // tbx_FirstFrame
+            // 
+            this.tbx_FirstFrame.Location = new System.Drawing.Point(211, 123);
+            this.tbx_FirstFrame.Name = "tbx_FirstFrame";
+            this.tbx_FirstFrame.Size = new System.Drawing.Size(100, 21);
+            this.tbx_FirstFrame.TabIndex = 20;
+            this.tbx_FirstFrame.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(419, 301);
+            this.Controls.Add(this.tbx_FirstFrame);
             this.Controls.Add(this.rdb_timestamp);
             this.Controls.Add(this.rdb_frame);
-            this.Controls.Add(this.lbl_FirstFrame);
             this.Controls.Add(this.btn_ReadFrame);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.btn_Test);
@@ -298,9 +297,9 @@
         private System.Windows.Forms.Button btn_Test;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btn_ReadFrame;
-        private System.Windows.Forms.Label lbl_FirstFrame;
         private System.Windows.Forms.RadioButton rdb_frame;
         private System.Windows.Forms.RadioButton rdb_timestamp;
+        private System.Windows.Forms.TextBox tbx_FirstFrame;
     }
 }
 
