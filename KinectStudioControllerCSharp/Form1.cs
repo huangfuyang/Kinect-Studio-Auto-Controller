@@ -145,6 +145,7 @@ namespace KinectStudioControllerCSharp
         /// <returns></returns>
         private bool SplitXED(int start, int duration, string fileName)
         {
+            start = start < 0 ? 0 : start;
             IntPtr hMenuStrip = win32API.FindWindowEx(hWnd, IntPtr.Zero, null, "menuStrip1");
             if (!IsConnected || hMenuStrip == IntPtr.Zero)
             {
@@ -233,7 +234,9 @@ namespace KinectStudioControllerCSharp
 
         private bool SplitByFrame(int start, int duration, string name)
         {
+            
             start = Frame2Timestamp(start);
+            start = start < 0 ? 0 : start;
             duration = (int)((float)duration * 33.33);
             bool r = SplitXED(start, duration, name);
 
@@ -301,13 +304,15 @@ namespace KinectStudioControllerCSharp
             {
                 Segment item = segList[i];
                 bool r = false;
+                int bufferFrame = 15;
+                int bufferTimestamp = bufferFrame * 33;
                 if (rdb_frame.Checked)
                 {
-                    r = SplitByFrame(item.start, item.end - item.start, item.name);
+                    r = SplitByFrame(item.start - bufferFrame, item.end - item.start + bufferFrame*2, item.name);
                 }
                 else
                 {
-                    r = SplitXED(item.start, item.end - item.start, item.name);
+                    r = SplitXED(item.start - bufferTimestamp, item.end - item.start * bufferTimestamp*2, item.name);
 
                 }
 
@@ -531,7 +536,7 @@ namespace KinectStudioControllerCSharp
                 Thread.Sleep(200);
             }
             FirstFrame = min;
-
+            
         }
 
 
