@@ -178,10 +178,9 @@ namespace KinectStudioControllerCSharp
             win32API.PostMessage(hMenu, win32API.WM_LBUTTONUP, 0, (y1 << 16) + x1);
             Thread.Sleep(1000);
             // send range
-            string edit = "WindowsForms10.EDIT.app.0.2bf8098_r18_ad1";
             IntPtr hSelectRange = win32API.FindWindow(null, "Select Range");
-            IntPtr hDuration = win32API.FindWindowEx(hSelectRange, IntPtr.Zero, edit, null);
-            IntPtr hStart = win32API.FindWindowEx(hSelectRange, hDuration, edit, null);
+            IntPtr hDuration = GetWindowChildBFSByIndex(hSelectRange, 2);
+            IntPtr hStart = GetWindowChildBFSByIndex(hSelectRange, 3);
             win32API.SendMessage(hStart, win32API.WM_SETTEXT, IntPtr.Zero, start.ToString());
             win32API.SendMessage(hDuration, win32API.WM_SETTEXT, IntPtr.Zero, duration.ToString());
             IntPtr hOK = win32API.FindWindowEx(hSelectRange, IntPtr.Zero, null, "OK");
