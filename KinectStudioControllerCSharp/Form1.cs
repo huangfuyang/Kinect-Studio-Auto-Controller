@@ -303,7 +303,7 @@ namespace KinectStudioControllerCSharp
             {
                 Segment item = segList[i];
                 bool r = false;
-                int bufferFrame = 15;
+                int bufferFrame = 20;
                 int bufferTimestamp = bufferFrame * 33;
                 if (rdb_frame.Checked)
                 {
