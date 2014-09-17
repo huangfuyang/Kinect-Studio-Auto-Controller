@@ -17,6 +17,8 @@ namespace KinectStudioControllerCSharp
 
     public partial class Form1 : Form
     {
+        const int waiting = 300;
+        const int bufferFrame = 20;
         System.Timers.Timer timer;
         bool IsSaving = false;
         private bool _isConnected;
@@ -153,14 +155,14 @@ namespace KinectStudioControllerCSharp
             }
             Console.WriteLine("menuStrip:" + Convert.ToString(hMenuStrip.ToInt32(), 16));
             win32API.GetWindowThreadProcessId(hWnd, out p_processid);
-            Thread.Sleep(1000);
+            Thread.Sleep(waiting);
             //click timeline
             Console.WriteLine("click timeline");
             Console.WriteLine("-----------------");
             int x = 128, y = 10;
             win32API.SendMessage(hMenuStrip, win32API.WM_LBUTTONDOWN, 0, (y << 16) + x);
             win32API.SendMessage(hMenuStrip, win32API.WM_LBUTTONUP, 0, (y << 16) + x);
-            Thread.Sleep(1000);
+            Thread.Sleep(waiting);
             // find menu 
             win32API.EnumWindows(new win32API.EnumWindowsProc(EnumWindowsFunc), p_processid);
             if (hMenu == hWnd)
@@ -173,10 +175,10 @@ namespace KinectStudioControllerCSharp
             Console.WriteLine("click select range");
             Console.WriteLine("-----------------");
             int x1 = 20, y1 = 10;
-            Thread.Sleep(300);
+            Thread.Sleep(waiting);
             win32API.PostMessage(hMenu, win32API.WM_LBUTTONDOWN, 0, (y1 << 16) + x1);
             win32API.PostMessage(hMenu, win32API.WM_LBUTTONUP, 0, (y1 << 16) + x1);
-            Thread.Sleep(1000);
+            Thread.Sleep(waiting);
             // send range
             IntPtr hSelectRange = win32API.FindWindow(null, "Select Range");
             IntPtr hDuration = GetWindowChildBFSByIndex(hSelectRange, 2);
@@ -186,7 +188,7 @@ namespace KinectStudioControllerCSharp
             IntPtr hOK = win32API.FindWindowEx(hSelectRange, IntPtr.Zero, null, "OK");
             win32API.SendMessage(hOK, win32API.BM_CLICK, 0, 0);
             // save range
-            Thread.Sleep(1000);
+            Thread.Sleep(waiting);
             // click timeline
             Console.WriteLine("menuStrip:" + Convert.ToString(hMenuStrip.ToInt32(), 16));
             Console.WriteLine("click timeline");
@@ -196,7 +198,7 @@ namespace KinectStudioControllerCSharp
             win32API.SendMessage(hMenuStrip, win32API.WM_LBUTTONUP, 0, (y << 16) + x);
             // click save range
             int x2 = 20, y2 = 55;
-            Thread.Sleep(1000);
+            Thread.Sleep(waiting);
             win32API.EnumWindows(new win32API.EnumWindowsProc(EnumWindowsFunc), p_processid);
             if (hMenu == hWnd)
             {
@@ -209,11 +211,11 @@ namespace KinectStudioControllerCSharp
             win32API.PostMessage(hMenu, win32API.WM_LBUTTONDOWN, 0, (y2 << 16) + x2);
             win32API.PostMessage(hMenu, win32API.WM_LBUTTONUP, 0, (y2 << 16) + x2);
             // wait save dialog
-            Thread.Sleep(2000);
+            Thread.Sleep(700);
             win32API.EnumWindows(new win32API.EnumWindowsProc(EnumWindowsFunc), p_processid);
             Console.WriteLine("save as:" + Convert.ToString(hMenu.ToInt32(), 16));
             IntPtr hdialog = hMenu;
-            Thread.Sleep(1000);
+            //Thread.Sleep(waiting);
 
             // find file path text edit
             IntPtr hfileName = GetWindowChildDFSByDepth(hdialog, 5);
@@ -225,7 +227,7 @@ namespace KinectStudioControllerCSharp
             Console.WriteLine("save:" + hsave);
             // click save
             win32API.SendMessage(hsave, win32API.BM_CLICK, 0, 0);
-            Thread.Sleep(3000);
+            Thread.Sleep(1500);
             IsSaving = true;
             Console.WriteLine("-----------------");
             return true;
@@ -301,17 +303,17 @@ namespace KinectStudioControllerCSharp
             }
             for (int i = 0; i < segList.Count(); i++)
             {
+                Console.WriteLine("Processing {0}/{1}",i+1,segList.Count());
                 Segment item = segList[i];
                 bool r = false;
-                int bufferFrame = 20;
                 int bufferTimestamp = bufferFrame * 33;
                 if (rdb_frame.Checked)
                 {
-                    r = SplitByFrame(item.start - bufferFrame, item.end - item.start + bufferFrame*2, item.name);
+                    r = SplitByFrame(item.start - bufferFrame, item.end - item.start + bufferFrame, item.name);
                 }
                 else
                 {
-                    r = SplitXED(item.start - bufferTimestamp, item.end - item.start * bufferTimestamp*2, item.name);
+                    r = SplitXED(item.start - bufferTimestamp, item.end - item.start * bufferTimestamp, item.name);
 
                 }
 
@@ -325,14 +327,14 @@ namespace KinectStudioControllerCSharp
                 {
                     Console.WriteLine("fail start again");
                     i--;
-
+                    Thread.Sleep(waiting);
                 }
                 else
                 {
                     Console.WriteLine("suceed save {0}", item.name);
+                    Thread.Sleep(500);
                 }
                 Console.WriteLine("================================================");
-                Thread.Sleep(3000);
             }
 
 
@@ -454,6 +456,12 @@ namespace KinectStudioControllerCSharp
                 while (line != null && line != "")
                 {
                     string[] cells = line.Split();
+                    Console.WriteLine(line);
+                    if (cells[4].ToLower() == "false")
+                    {
+                        line = sr.ReadLine();
+                        continue;
+                    }
                     int start = Convert.ToInt32(cells[7]);
                     int end = Convert.ToInt32(cells[8]);
                     string fileName = cells[1] + ' ' + cbb_name.Text + ' ' + cells[0] + cells[3];
